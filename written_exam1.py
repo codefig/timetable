@@ -8,27 +8,17 @@ class written_exams(object):
 		self.lect_t = {'JAO3':700, 'MP01':400, 'CAPLT':400}; #Lecture theater capacity for one course 
 		self.lect_ts = [] #For combinig lecture theaters
 		self.lect_turbo = {'JAO3':1000, 'MP01':600, 'CAPLT':1400} #Lecture theatre for 2 courses
-		self.days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];#days for the lecture
-		self.day_counter = 1;
 		self.subj_list = subj_list; #Assign the subject a state
 		self.begin_hour = 9; #When the exam began
 		self.begin_minute = 0;#When the exam began
 		self.time_hour = 9; #Number of hours for the exam
 		self.time_minute = 0; #	Number of minutes for the exam
 		self.past_minute = 0; #Save the time that has elapsed since first exam
-		self.schedule = ""; #return string for the time table
-		# print "\t\t\t",self.days[0];
-		self.schedule = self.schedule+"*********************\n";
-		self.schedule = self.schedule+self.days[0]+"\n";
-		self.schedule = self.schedule+"*********************\n\n";
-		# print "====================",self.time_hour,":",self.time_minute," AM =======================";
-		self.schedule = self.schedule+"==================== "+str(self.time_hour)+" : "+str(self.time_minute)+" AM =======================";
+		print "====================",self.time_hour,":",self.time_minute," AM =======================";
 
 
 	#Function for starting the arrange operation
 	def arrange(self):
-		if (self.day_counter > 4):
-			self.day_counter = 0;
 		if(len(self.subj_list.keys()) <= 0):
 			return;
 		elif (len(self.lect_t.keys()) <= 0):
@@ -39,17 +29,7 @@ class written_exams(object):
 			self.time_minute = self.begin_minute + (self.past_minute - (60*(self.past_minute/60))); #Increase by number of minutes for the exam
 			self.lect_t = copy(self.lect_theater);
 			self.lect_turbo = copy(self.lect_theater_turbo);
-			if(self.time_hour >= 18):
-				# print "\t\t\t",self.days[self.day_counter];
-				self.schedule = self.schedule+"\n\n\nc*********************\n";
-				self.schedule = self.schedule+self.days[self.day_counter]+"\n";
-				self.schedule = self.schedule+"*********************\n";
-				self.day_counter += 1;
-				self.past_minute = 0;
-				self.time_hour = 9;
-				self.time_minute = 0;
-			self.schedule = "\n\n"+self.schedule+"\n\n==================== "+str(self.time_hour)+" : "+str(self.time_minute)+" AM =======================";
-			# print "====================",self.time_hour,":",self.time_minute," AM =======================";
+			print "====================",self.time_hour,":",self.time_minute," AM =======================";
 
 		#Lets' get the first subject
 		subject = self.subj_list.keys()[self.subj_list.values().index(max(self.subj_list.values()))];
@@ -133,29 +113,23 @@ class written_exams(object):
 						if(self.subj_list[joining_subject] > total_segmented_space):
 							raise ValueError;
 						#####print "subject to merge with in turbo ", joining_subject;#####
-						# print "\n",joining_subject;
-						self.schedule = self.schedule+ "\n"+joining_subject;
+						print "\n",joining_subject;
 						#Lets' delete the joining subject
 						del self.subj_list[joining_subject];
 					except (ValueError,IndexError) as e:
-						# print "";
-						pass;
+						print "";
 					#Clear the list of combined lecture theaters
 					self.lect_ts = [];
 					#Lets' delete the subject
 					del self.subj_list[subject];
 					self.arrange();
-		return self.schedule;
-		# self.schedule = "";
 
 	#Generic functoin for formated printing
 	def print_table(self,subject,joining_subject,lect_t):
 		if joining_subject == "":
-			# print "\n",subject, "=====>\t", lect_t, "\n";
-			self.schedule = self.schedule+"\n"+subject+"\n =====>\t"+ lect_t+"\n";
+			print "\n",subject, "=====>\t", lect_t, "\n";
 		else:
-			# print "\n",subject,"\n\t", "=====>", lect_t, "\n",joining_subject;
-			self.schedule = self.schedule+"\n"+subject+"\n\t"+ "=====>"+ lect_t+ "\n"+joining_subject+"\n\n";
+			print "\n",subject,"\n\t", "=====>", lect_t, "\n",joining_subject;
 
 	#For finding another class to join a class 
 	def find_friend(self,lect_t,subject,throttle):
@@ -222,17 +196,19 @@ class written_exams(object):
 			self.find_lect_t_friend(needed_space);
 		else:
 			#Found the best combination without turbo mode
-			# print "\n",subject
-			self.schedule = self.schedule + "\n"+subject+"\n";
+			print "\n",subject
 			for lect_t in self.lect_ts:
-				# print "\t=====>", lect_t;
-				self.schedule = self.schedule+"\n\t=====> "+ lect_t;
+				print "\t=====>", lect_t;
 			#Lets' remove the theater
 			del self.lect_t[joining_lect_t];
 			del self.lect_turbo[joining_lect_t];
 			return;
 
 
-# classify = written_exams({'AGRIC':8000,'MATH':14000,'CHEMISTRY':20000,'PHYSICS':19000,'LIT':50000,'POL1':40000,'POL2':40000,'POL3':40000,'POL4':40000,'POL5':40000,'POL6':40000,'POL7':40000});
-# classify.arrange();
+classify = written_exams({'AGRIC':800,'MATH':1400,'CHEMISTRY':2000,'PHYSICS':900,'LIT':500,'POL':400,'math':2000, 
+'FST':4000, 
+'AG':1250,
+'ANOTHER':800,
+"AMAKa":530});
+classify.arrange();
 		
