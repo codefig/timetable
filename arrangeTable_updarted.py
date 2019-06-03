@@ -14,6 +14,8 @@ class Arr(object):
 		self.begin_minute = 0;
 		self.days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'];
 		self.day = 0;
+		self.ret = [];
+		self.ret.append({'Monday':{str(self.begin_hour)+" : "+str(self.begin_minute)+" AM":{}}});
 		# super(ClassName, self).__init__()
 		# self.arg = arg
 
@@ -44,6 +46,7 @@ class Arr(object):
 				self.day += 1;
 			self.free_lt = deepcopy(self.halls);
 			self.division = self.division+"*************** "+self.days[self.day]+" ****************\n";
+			self.ret.append({str(self.days[self.day]):{"9:0 AM":{}}});
 			#print "***************",days[day],"****************";
 
 		#Get the current time and time after this exam
@@ -68,8 +71,16 @@ class Arr(object):
 				#print "\t\t\t|",time_start[0],":",time_start[1] , "-> " , time_end[0],":",time_end[1];
 				#print subj , lect_t,"\n";
 				self.division = self.division + " "+subj+" "+self.lect_t+"| \t";
-				self.division = self.division +str(time_start[0])+" : "+str(time_start[1]) + " -> " + str(time_end[0])+" : "+str(time_end[1])+"\n\n"
-				
+				self.division = self.division +str(time_start[0])+" : "+str(time_start[1]) + " -> " + str(time_end[0])+" : "+str(time_end[1])+"\n\n";
+				if(self.ret[self.day][self.days[self.day]].keys()[len(self.ret[self.day][self.days[self.day]].keys())-1] == (str(time_start[0])+" : "+str(time_start[1])+" AM")):
+						pass;
+				else:
+					self.ret[self.day][self.days[self.day]].update({str(time_start[0])+" : "+str(time_start[1])+" AM":{}})
+
+				lect = "";
+				for a in self.lect_t:
+					lect = lect + ',' +a;
+				self.ret[self.day][self.days[self.day]][self.ret[self.day][self.days[self.day]].keys()[len(self.ret[self.day][self.days[self.day]].keys())-1]].update({lect:[subj]});			
 				#print "total time for",subj,"is",total_time+30;
 				self.total_time = 0;
 				self.lect_t = set([]);
@@ -125,8 +136,16 @@ class Arr(object):
 					#print subj , lect_t,"\n";
 					self.division = self.division + " "+subj+" "+self.lect_t+"| \t";
 					self.division = self.division +str(time_start[0])+" : "+str(time_start[1]) + " -> " + str(time_end[0])+" : "+str(time_end[1])+"\n\n";
+					if(self.ret[self.day][self.days[self.day]].keys()[len(self.ret[self.day][self.days[self.day]].keys())-1] == (str(time_start[0])+" : "+str(time_start[1])+" AM")):
+						pass;
+					else:
+						self.ret[self.day][self.days[self.day]].update({str(time_start[0])+" : "+str(time_start[1])+" AM":{}})
 					
-
+					lect = "";
+					for a in self.lect_t:
+						lect = lect + ',' +a;
+					self.ret[self.day][self.days[self.day]][self.ret[self.day][self.days[self.day]].keys()[len(self.ret[self.day][self.days[self.day]].keys())-1]].update({lect:[subj]});			
+				
 					#print "total time for",subj,"is",total_time+30;
 					self.total_time = 0;
 					self.lect_t = set([]);
@@ -158,8 +177,12 @@ class Arr(object):
 					#print subj , hall,"\n";# time_start[0],":",time_start[1] , "-> " , time_end[0],":",time_end[1];
 					self.division = self.division + " "+subj+" "+hall+"| \t";
 					self.division = self.division +str(time_start[0])+" : "+str(time_start[1]) + " -> " + str(time_end[0])+" : "+str(time_end[1])+"\n\n"
-					
-
+					if(self.ret[self.day][self.days[self.day]].keys()[len(self.ret[self.day][self.days[self.day]].keys())-1] == (str(time_start[0])+" : "+str(time_start[1])+" AM")):
+						pass;
+					else:
+						self.ret[self.day][self.days[self.day]].update({str(time_start[0])+" : "+str(time_start[1])+" AM":{}})
+					self.ret[self.day][self.days[self.day]][self.ret[self.day][self.days[self.day]].keys()[len(self.ret[self.day][self.days[self.day]].keys())-1]].update({hall:[subj]});			
+				
 					#print "total time for",subj,"is",total_time+30;
 					self.total_time = 0;
 					self.lect_t = set([]);
@@ -176,7 +199,7 @@ class Arr(object):
 
 				#call back the function
 				self.arrange();
-		return self.division;
+		return [self.division,self.ret];
 
 	def timeStart(self,curr_time):
 		start_hour = self.begin_hour+(curr_time/60);
