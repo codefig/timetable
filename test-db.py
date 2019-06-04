@@ -62,17 +62,19 @@ def get_halls_written():
         lecture_turbo.update({str(row[1]):int(row[3])});
     return([lecture_t,lecture_turbo])
 
-def send_eTimetable(data,halls):
-    # print (data)
-    # print(halls);
-    schedule = Arr(halls,data,0,set([]));
-    print(schedule.arrange()[1]);
+# def send_eTimetable(data,halls):
+#     # print (data)
+#     # print(halls);
+#     print data;
+#     print halls;
+#     schedule = Arr(halls,data,0,set([]));
+#     print(schedule.arrange()[1]);
 
-def send_writtenTable(data,halls,halls_t):
-    # print (data);
-    # print(halls);
+def send_writtenTable(data,halls,halls_t,which):
+    print (data);
+    print(halls);
     # print(halls_t);
-    schedule = written_exams(data,halls,halls_t);
+    schedule = written_exams(data,halls,halls_t,which);
     result = schedule.arrange();
     # print(result[0]);
     print(result[1]);
@@ -80,6 +82,6 @@ def send_writtenTable(data,halls,halls_t):
 # send_eTimetable(get_courses(),get_halls_cbt())
 
 halls = get_halls_cbt();
-# send_writtenTable(get_courses("written"),halls[0],halls[1]);
-send_eTimetable(get_courses("cbt"),halls);
+send_writtenTable(get_courses("written"),halls,halls,"cbt");
+# send_eTimetable(get_courses("written"),halls);
 
