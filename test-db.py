@@ -81,7 +81,7 @@ def send_writtenTable(data,halls,halls_t,which):
 
 # send_eTimetable(get_courses(),get_halls_cbt())
 
-halls = get_halls_cbt();
-send_writtenTable(get_courses("written"),halls,halls,"cbt");
+halls = get_halls_written();
+send_writtenTable(get_courses("cbt"),halls[0],halls[1],"cbt");
 # send_eTimetable(get_courses("written"),halls);
 
