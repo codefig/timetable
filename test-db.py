@@ -4,7 +4,6 @@ from arrangeTable_updarted import *
 from written_exam_updated import *
 
 def get_courses(string):
-    print("Getting courses")
     db = mysql.connector.connect(host='127.0.0.1', 
     username='root', 
     password='', 
@@ -14,7 +13,6 @@ def get_courses(string):
         courses_query = "SELECT * FROM courses_cbt";
         cursor.execute(courses_query)
         rows = cursor.fetchall()
-        print("Total rows : ", cursor.rowcount)
         output = dict({})
         for row in rows:
         #output = output + str(row[0])+ "\t" + str(row[1]) + "\t" + str(row[2]) + "\n"
@@ -24,7 +22,6 @@ def get_courses(string):
         courses_query = "SELECT * FROM courses_written"
         cursor.execute(courses_query)
         rows = cursor.fetchall()
-        print("Total rows : ", cursor.rowcount)
         output = dict({})
         for row in rows:
             #output = output + str(row[0])+ "\t" + str(row[1]) + "\t" + str(row[2]) + "\n"
@@ -71,8 +68,10 @@ def get_halls_written():
 #     print(schedule.arrange()[1]);
 
 def send_writtenTable(data,halls,halls_t,which):
-    print (data);
-    print(halls);
+    print "Subjects"," ",(data);
+    print "Halls"," ", (halls);
+    print "\n\nSchedule:"
+    print "\n"
     # print(halls_t);
     schedule = written_exams(data,halls,halls_t,which);
     result = schedule.arrange();
@@ -81,7 +80,7 @@ def send_writtenTable(data,halls,halls_t,which):
 
 # send_eTimetable(get_courses(),get_halls_cbt())
 
-halls = get_halls_written();
-send_writtenTable(get_courses("cbt"),halls[0],halls[1],"cbt");
+halls = get_halls_cbt();
+send_writtenTable(get_courses("cbt"),halls,halls,"cbt");
 # send_eTimetable(get_courses("written"),halls);
 

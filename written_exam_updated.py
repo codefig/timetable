@@ -17,7 +17,7 @@ class written_exams(object):
 		self.subj_list = deepcopy(subj_list); #Assign the self.subject a state
 		self.begin_hour = 9; #When the exam began
 		self.begin_minute = 0;#When the exam began
-		self.time_hour = 9; #Number of hours for the exam
+		self.time_hour = 17; #Number of hours for the exam
 		self.time_minute = 0; #	Number of minutes for the exam
 		self.past_minute = 0; #Save the time that has elapsed since first exam
 		self.duration = 0; #The time for each paper
@@ -38,7 +38,7 @@ class written_exams(object):
 		self.ret.append({'Monday':{str(self.time_hour)+" : "+str(self.time_minute)+" AM - "+str(self.time_hour+(self.past_minute)/60)+" : "+str(self.time_minute+30)+" AM":{}}});
 		self.time = str(self.time_hour)+" : "+str(self.time_minute)+" AM - "+str(self.time_hour+(self.past_minute)/60)+" : "+str(self.time_minute+30)+" AM";
 		self.subject = self.subj_list.keys()[self.subj_list.values().index(max(self.subj_list.values()))];
-		self.past_minute += 30;
+		self.past_minute += 510;
 		self.time_hour = self.begin_hour + self.past_minute/60; #increase by number of time for the exam
 		self.time_minute = self.begin_minute + (self.past_minute - (60*(self.past_minute/60))); #Increase by number of minutes for the exam
 
@@ -60,19 +60,22 @@ class written_exams(object):
 			self.time_minute = self.begin_minute + (self.past_minute - (60*(self.past_minute/60))); #Increase by number of minutes for the exam
 			self.lect_t = deepcopy(self.lect_theater);
 			self.lect_turbo = deepcopy(self.lect_theater_turbo);
-			if(self.time_hour >= 18):
+			if(self.time_hour >= 18 and self.time_minute >=30):
 				# print "\t\t\t",self.days[self.day_counter];
 				self.day_counter += 1;
 				self.schedule = self.schedule+"\n\n\nc*********************\n";
 				self.schedule = self.schedule+self.days[self.day_counter-1]+"\n";
 				self.schedule = self.schedule+"*********************\n";
-				self.past_minute = 0;
-				self.time_hour = 9;
-				self.time_minute = 0;
+				self.past_minute = 30;
+				tmp1 = self.begin_hour;
+				tmp2 = self.begin_minute;
+				self.time_hour = self.begin_hour + self.past_minute/60; #increase by number of time for the exam
+				self.time_minute = self.begin_minute + (self.past_minute - (60*(self.past_minute/60))); #Increase by number of minutes for the exam
 				self.ret.append({self.days[self.day_counter-1]:{}});
+				
 			self.ret[self.day_counter-1][self.days[self.day_counter-1]].update({str(tmp1)+" : "+str(tmp2)+" AM - "+str(self.time_hour)+" : "+str(self.time_minute)+" AM":{}})
 			self.time = str(tmp1)+" : "+str(tmp2)+" AM - "+str(self.time_hour)+" : "+str(self.time_minute)+" AM";
-			print self.time;
+			# print self.time;
 			# self.schedule = "\n\n"+self.schedule+"\n\n==================== "+str(self.time_hour)+" : "+str(self.time_minute)+" AM =======================";
 			# print "====================",self.time_hour,":",self.time_minute," AM =======================";
 		
@@ -95,6 +98,7 @@ class written_exams(object):
 			if(self.which == "cbt"):
 				del self.subj_list[self.subject];
 				if(len(self.subj_list.keys()) > 0):
+					self.ret[self.day_counter-1][self.days[self.day_counter-1]][self.time].update({lect_t:[self.subject]});
 					self.subject = self.subj_list.keys()[self.subj_list.values().index(max(self.subj_list.values()))];
 
 			else:
