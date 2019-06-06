@@ -370,27 +370,26 @@ class Ui_MainWindow(object):
         print("This is the delete halls function")
     
     def generate_timetable(self):
-        print("THis is the generate timetable function")
-        halls = self.get_halls_written();
-        table = self.send_writtenTable(self.get_courses("cbt"),halls[0],halls[1],"written")
-        output = ""
-        for i in table:
-            for (days, values) in i.items():
-                for(time, arrangement) in values.items():
-                    for(venue, course) in arrangement.items():
-                        courselist = ", ".join(course)
-                        output  = output + days + "\t" + courselist +"\t" + time + "\t\t" + venue +"\n"
-        self.textEdit.setText(output)
+        if self.db == None:
+            QMessageBox.warning(self.newMainWindow, "Error ", "Please Connect to Database first")
+        else:
+            halls = self.get_halls_written();
+            table = self.send_writtenTable(self.get_courses("written"),halls[0],halls[1],"written")
+            output = ""
+            for i in table:
+                for (days, values) in i.items():
+                    for(time, arrangement) in values.items():
+                        for(venue, course) in arrangement.items():
+                            courselist = ", ".join(course)
+                            output  = output + days + "\t" + courselist +"\t" + time + "\t\t" + venue +"\n"
+            self.textEdit.setText(output)
     
     def print_timetable(self):
         print("This is the print timetable function")
 
     def get_courses(self,string):
-        db = mysql.connector.connect(host='127.0.0.1', 
-        username='root', 
-        password='', 
-        database='timetable_funaab')
-        cursor = db.cursor()
+        
+        cursor = self.db.cursor()
         if(string is "cbt"):
             courses_query = "SELECT * FROM courses_cbt";
             cursor.execute(courses_query)
@@ -410,11 +409,8 @@ class Ui_MainWindow(object):
                 output.update({str(row[1]):row[2 ]});
             return(output)
     def get_halls_written(self):
-        db = mysql.connector.connect(host='127.0.0.1', 
-        username='root', 
-        password='', 
-        database='timetable_funaab')
-        cursor = db.cursor()
+        
+        cursor = self.db.cursor()
         lecture_query = "SELECT * FROM halls_written"
         cursor.execute(lecture_query)
         rows = cursor.fetchall()

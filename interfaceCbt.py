@@ -358,18 +358,21 @@ class Ui_MainWindow(object):
         self.tableWidget.setRowCount(4)
         self.tableWidget.setColumnCount(2)
        
-        print("THis is the generate timetable function")
-        halls = self.get_halls_cbt();
-        table = self.send_writtenTable(self.get_courses("cbt"),halls,halls,"cbt")
-        
-        output = ""
-        for i in table:
-            for (days, values) in i.items():
-                for(time, arrangement) in values.items():
-                    for(venue, course) in arrangement.items():
-                        courselist = " ".join(course)
-                        output  = output + days + "\t" + courselist +"\t" + time + "\t" + venue +"\n"
-        self.textEdit.setText(output)
+        if self.db == None:
+            QMessageBox.warning(self.newMainWindow, "Error ", "Please Connect to Database first")
+        else:
+            halls = self.get_halls_cbt();
+            table = self.send_writtenTable(self.get_courses("cbt"),halls,halls,"cbt")
+            
+            output = ""
+            for i in table:
+                for (days, values) in i.items():
+                    for(time, arrangement) in values.items():
+                        for(venue, course) in arrangement.items():
+                            courselist = " ".join(course)
+                            output  = output + days + "\t" + courselist +"\t" + time + "\t" + venue +"\n"
+            self.textEdit.setText(output)
+
     def print_timetable(self):
         print("This is the print timetable function")
     
@@ -401,11 +404,8 @@ class Ui_MainWindow(object):
             QMessageBox.information(self.newMainWindow, "Check connection", "Application is connected to database")
     
     def get_courses(self,string):
-        db = mysql.connector.connect(host='127.0.0.1', 
-        username='root', 
-        password='', 
-        database='timetable_funaab')
-        cursor = db.cursor()
+       
+        cursor = self.db.cursor()
         if(string is "cbt"):
             courses_query = "SELECT * FROM courses_cbt";
             cursor.execute(courses_query)
@@ -426,11 +426,8 @@ class Ui_MainWindow(object):
             return(output)
 
     def get_halls_cbt(self):
-        db = mysql.connector.connect(host='127.0.0.1', 
-        username='root', 
-        password='', 
-        database='timetable_funaab')
-        cursor = db.cursor()
+       
+        cursor = self.db.cursor()
         lecture_query = "SELECT * FROM halls_cbt"
         cursor.execute(lecture_query)
         rows = cursor.fetchall()
