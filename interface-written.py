@@ -14,6 +14,9 @@ from courseDialog import Ui_Dialog
 from venueDialog import Venue_Dialog
 from WrittenHallDialog import Ui_writtenHallDialog
 
+from arrangeTable_updarted import *
+from written_exam_updated import *
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow") 
@@ -368,9 +371,66 @@ class Ui_MainWindow(object):
     
     def generate_timetable(self):
         print("THis is the generate timetable function")
+        halls = self.get_halls_written();
+        table = self.send_writtenTable(self.get_courses("cbt"),halls[0],halls[1],"written")
+        output = ""
+        for i in table:
+            for (days, values) in i.items():
+                for(time, arrangement) in values.items():
+                    for(venue, course) in arrangement.items():
+                        courselist = ", ".join(course)
+                        output  = output + days + "\t" + courselist +"\t" + time + "\t\t" + venue +"\n"
+        self.textEdit.setText(output)
     
     def print_timetable(self):
         print("This is the print timetable function")
+
+    def get_courses(self,string):
+        db = mysql.connector.connect(host='127.0.0.1', 
+        username='root', 
+        password='', 
+        database='timetable_funaab')
+        cursor = db.cursor()
+        if(string is "cbt"):
+            courses_query = "SELECT * FROM courses_cbt";
+            cursor.execute(courses_query)
+            rows = cursor.fetchall()
+            output = dict({})
+            for row in rows:
+            #output = output + str(row[0])+ "\t" + str(row[1]) + "\t" + str(row[2]) + "\n"
+                output.update({str(row[1]):row[3]});
+            return (output)
+        else:
+            courses_query = "SELECT * FROM courses_written"
+            cursor.execute(courses_query)
+            rows = cursor.fetchall()
+            output = dict({})
+            for row in rows:
+                #output = output + str(row[0])+ "\t" + str(row[1]) + "\t" + str(row[2]) + "\n"
+                output.update({str(row[1]):row[2 ]});
+            return(output)
+    def get_halls_written(self):
+        db = mysql.connector.connect(host='127.0.0.1', 
+        username='root', 
+        password='', 
+        database='timetable_funaab')
+        cursor = db.cursor()
+        lecture_query = "SELECT * FROM halls_written"
+        cursor.execute(lecture_query)
+        rows = cursor.fetchall()
+        lecture_t = dict({})
+        lecture_turbo = dict({})
+        for row in rows:
+            lecture_t.update({str(row[1]):int(row[2])});
+            lecture_turbo.update({str(row[1]):int(row[3])});
+        return([lecture_t,lecture_turbo])
+
+    def send_writtenTable(self,data,halls,halls_t,which):
+    
+        schedule = written_exams(data,halls,halls_t,which);
+        result = schedule.arrange();
+        # print(result[0]);
+        return(result[1]);
     
     def connect_database(self):
         try:

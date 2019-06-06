@@ -1,17 +1,14 @@
-# -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'interface-cbt.ui'
-#
-# Created by: PyQt5 UI code generator 5.12.1
-#
-# WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMessageBox, QApplication, QDialog, QPushButton, QMainWindow
+from PyQt5.QtWidgets import QMessageBox, QApplication, QDialog, QPushButton, QMainWindow, QTableWidget
 import mysql.connector
 from mysql.connector import Error
 from courseDialog import Ui_Dialog
 from venueDialog import Venue_Dialog
+
+from arrangeTable_updarted import *
+from written_exam_updated import *
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -356,8 +353,23 @@ class Ui_MainWindow(object):
         print("This is the delete halls function")
     
     def generate_timetable(self):
+
+        self.tableWidget = QTableWidget()
+        self.tableWidget.setRowCount(4)
+        self.tableWidget.setColumnCount(2)
+       
         print("THis is the generate timetable function")
-    
+        halls = self.get_halls_cbt();
+        table = self.send_writtenTable(self.get_courses("cbt"),halls,halls,"cbt")
+        
+        output = ""
+        for i in table:
+            for (days, values) in i.items():
+                for(time, arrangement) in values.items():
+                    for(venue, course) in arrangement.items():
+                        courselist = " ".join(course)
+                        output  = output + days + "\t" + courselist +"\t" + time + "\t" + venue +"\n"
+        self.textEdit.setText(output)
     def print_timetable(self):
         print("This is the print timetable function")
     
@@ -387,7 +399,52 @@ class Ui_MainWindow(object):
             QMessageBox.warning(self.newMainWindow, "Check connection", "Application Not connected to database")
         else:
             QMessageBox.information(self.newMainWindow, "Check connection", "Application is connected to database")
-            
+    
+    def get_courses(self,string):
+        db = mysql.connector.connect(host='127.0.0.1', 
+        username='root', 
+        password='', 
+        database='timetable_funaab')
+        cursor = db.cursor()
+        if(string is "cbt"):
+            courses_query = "SELECT * FROM courses_cbt";
+            cursor.execute(courses_query)
+            rows = cursor.fetchall()
+            output = dict({})
+            for row in rows:
+            #output = output + str(row[0])+ "\t" + str(row[1]) + "\t" + str(row[2]) + "\n"
+                output.update({str(row[1]):row[3]});
+            return (output)
+        else:
+            courses_query = "SELECT * FROM courses_written"
+            cursor.execute(courses_query)
+            rows = cursor.fetchall()
+            output = dict({})
+            for row in rows:
+                #output = output + str(row[0])+ "\t" + str(row[1]) + "\t" + str(row[2]) + "\n"
+                output.update({str(row[1]):row[2 ]});
+            return(output)
+
+    def get_halls_cbt(self):
+        db = mysql.connector.connect(host='127.0.0.1', 
+        username='root', 
+        password='', 
+        database='timetable_funaab')
+        cursor = db.cursor()
+        lecture_query = "SELECT * FROM halls_cbt"
+        cursor.execute(lecture_query)
+        rows = cursor.fetchall()
+        output = dict({})
+        for row in rows:
+            #output = output + str(row[0])+ "\t" + str(row[1]) + "\t" + str(row[2]) + "\n"
+            output.update({str(row[1]):int(row[2])});
+        return(output)
+
+    def send_writtenTable(self,data,halls,halls_t,which):
+        schedule = written_exams(data,halls,halls_t,which);
+        result = schedule.arrange();
+        # print(result[0]);
+        return(result[1]);
 
 
     def print_about(self):

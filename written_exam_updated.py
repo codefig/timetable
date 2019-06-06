@@ -17,9 +17,9 @@ class written_exams(object):
 		self.subj_list = deepcopy(subj_list); #Assign the self.subject a state
 		self.begin_hour = 9; #When the exam began
 		self.begin_minute = 0;#When the exam began
-		self.time_hour = 17; #Number of hours for the exam
+		self.time_hour = 9; #Number of hours for the exam
 		self.time_minute = 0; #	Number of minutes for the exam
-		self.past_minute = 0; #Save the time that has elapsed since first exam
+		self.past_minute = 30; #Save the time that has elapsed since first exam
 		self.duration = 0; #The time for each paper
 		self.schedule = ""; #return string for the time table
 		self.which = which;

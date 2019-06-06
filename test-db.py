@@ -68,19 +68,29 @@ def get_halls_written():
 #     print(schedule.arrange()[1]);
 
 def send_writtenTable(data,halls,halls_t,which):
-    print "Subjects"," ",(data);
-    print "Halls"," ", (halls);
-    print "\n\nSchedule:"
-    print "\n"
-    # print(halls_t);
+  
     schedule = written_exams(data,halls,halls_t,which);
     result = schedule.arrange();
     # print(result[0]);
-    print(result[1]);
+    return(result[1]);
 
 # send_eTimetable(get_courses(),get_halls_cbt())
 
-halls = get_halls_cbt();
-send_writtenTable(get_courses("cbt"),halls,halls,"cbt");
+# halls = get_halls_cbt();
+# table = send_writtenTable(get_courses("cbt"),halls,halls,"cbt");
+
+halls = get_halls_written();
+table = send_writtenTable(get_courses("cbt"),halls[0],halls[1],"cbt");
+
+# print(table)
+
+output = ""
+for i in table:
+    for (days, values) in i.items():
+       for(time, arrangement) in values.items():
+           for(venue, course) in arrangement.items():
+               courselist = " ".join(course)
+               output  = output + days + "\t" + courselist +"\t" + time + "\t" + venue +"\n"
+print(output)
 # send_eTimetable(get_courses("written"),halls);
 
